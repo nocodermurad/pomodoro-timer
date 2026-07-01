@@ -80,18 +80,14 @@
 
         .modes {
             display: flex;
-            gap: 8px;
-            background: var(--card-bg);
-            padding: 4px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
+            gap: 12px;
         }
 
         .mode-btn {
             background: transparent;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            padding: 8px 18px;
+            border-radius: 9999px;
             color: var(--text-secondary);
             font-family: inherit;
             font-size: 14px;
@@ -100,92 +96,152 @@
             transition: all 0.2s ease;
         }
 
-        .mode-btn:hover {
+        .mode-btn:hover:not(.active) {
             color: var(--text-primary);
+            border-color: var(--text-secondary);
+            background: var(--card-bg);
         }
 
         .mode-btn.active {
-            background: var(--bg-color);
-            color: var(--text-primary);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border: 1px solid var(--border-color);
+            background: var(--text-primary);
+            color: var(--bg-color);
+            border-color: var(--text-primary);
         }
 
         .timer-display {
-            font-size: 72px;
+            font-size: 110px;
             font-weight: 700;
-            letter-spacing: -2px;
+            letter-spacing: -3px;
             color: var(--text-primary);
             font-variant-numeric: tabular-nums;
             line-height: 1;
+            margin: 16px 0;
         }
 
-        .controls {
+        .controls-row {
             display: flex;
-            gap: 12px;
             align-items: center;
+            gap: 20px;
         }
 
-        .btn {
-            background: var(--card-bg);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            border-radius: 6px;
+        .start-btn {
+            background: var(--text-primary);
+            color: var(--bg-color);
+            border: none;
+            padding: 12px 32px;
+            border-radius: 9999px;
             font-family: inherit;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-width: 80px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
-        .btn:hover {
-            background: var(--divider-color);
-        }
-        
-        .btn.primary {
-            background: var(--text-primary);
-            color: var(--bg-color);
-            border-color: var(--text-primary);
-        }
-        
-        .btn.primary:hover {
+        .start-btn:hover {
             opacity: 0.9;
         }
 
-        .sound-menu-container {
-            position: relative;
-            margin-top: 16px;
+        .icon-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            color: var(--text-secondary);
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: var(--text-secondary);
-            font-size: 14px;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            width: 40px;
+            height: 40px;
         }
 
-        .sound-select {
-            appearance: none;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
+        .icon-btn:hover, .icon-btn.active {
             color: var(--text-primary);
-            padding: 6px 28px 6px 12px;
-            border-radius: 6px;
+            background: var(--card-bg);
+        }
+
+        .icon-btn svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .sound-control-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .sound-popover {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            right: 50%;
+            transform: translateX(50%) translateY(4px);
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            padding: 6px;
+            display: none;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 140px;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+            pointer-events: none;
+        }
+
+        .sound-popover.active {
+            display: flex;
+            opacity: 1;
+            transform: translateX(50%) translateY(0);
+            pointer-events: auto;
+        }
+
+        .sound-option {
+            background: transparent;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            text-align: left;
             font-family: inherit;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 500;
+            color: var(--text-secondary);
             cursor: pointer;
-            outline: none;
-            background-image: url('data:image/svg+xml;utf8,<svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="%23888888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 10px center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.15s ease;
+            width: 100%;
         }
 
-        .sound-select:hover {
-            background-color: var(--divider-color);
+        .sound-option:hover {
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+
+        .sound-option.selected {
+            color: var(--text-primary);
+            font-weight: 600;
+            background: var(--card-bg);
+        }
+
+        .sound-option::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: transparent;
+            display: inline-block;
+        }
+
+        .sound-option.selected::after {
+            background: var(--text-primary);
         }
 
         .fullscreen-btn {
@@ -243,23 +299,32 @@
 
             <div class="timer-display" id="time-display">25:00</div>
 
-            <div class="controls">
-                <button class="btn primary" id="start-btn">Start</button>
-                <button class="btn" id="reset-btn">Reset</button>
-            </div>
+            <div class="controls-row">
+                <button class="start-btn" id="start-btn">Start</button>
+                
+                <button class="icon-btn" id="reset-btn" aria-label="Reset Timer" style="transition: transform 0.4s ease;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 4v6h-6"></path>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                </button>
 
-            <div class="sound-menu-container">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-                </svg>
-                <select class="sound-select" id="sound-select">
-                    <option value="none">No Sound</option>
-                    <option value="rain">Rain</option>
-                    <option value="birds">Birds</option>
-                    <option value="train">Train</option>
-                </select>
+                <div class="sound-control-wrapper">
+                    <button class="icon-btn" id="sound-btn" aria-label="Select Soundscape">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 18V5l12-2v13"></path>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <circle cx="18" cy="16" r="3"></circle>
+                        </svg>
+                    </button>
+                    
+                    <div class="sound-popover" id="sound-popover">
+                        <button class="sound-option selected" data-value="none">No Sound</button>
+                        <button class="sound-option" data-value="rain">Rain</button>
+                        <button class="sound-option" data-value="birds">Birds</button>
+                        <button class="sound-option" data-value="train">Train</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -286,8 +351,9 @@
         const startBtn = document.getElementById('start-btn');
         const resetBtn = document.getElementById('reset-btn');
         const modeBtns = document.querySelectorAll('.mode-btn');
-        const soundSelect = document.getElementById('sound-select');
-        
+        const soundBtn = document.getElementById('sound-btn');
+        const soundPopover = document.getElementById('sound-popover');
+        const soundOptions = document.querySelectorAll('.sound-option');
         const fullscreenBtn = document.getElementById('fullscreen-btn');
         const iconExpand = document.querySelector('.icon-expand');
         const iconCollapse = document.querySelector('.icon-collapse');
@@ -298,6 +364,7 @@
         let currentMode = 'pomodoro';
         let defaultTime = 25 * 60; // in seconds
         let timeRemaining = defaultTime;
+        let currentSound = 'none';
 
         // Web Audio API Synthesizer Setup
         let audioCtx = null;
@@ -449,20 +516,6 @@
             birdsTimer = setTimeout(playChirp, 800);
         }
 
-        function stopBirds() {
-            if (birdsTimer) {
-                clearTimeout(birdsTimer);
-                birdsTimer = null;
-            }
-            if (birdsNodes) {
-                try { birdsNodes.source.stop(); } catch(e) {}
-                try { birdsNodes.source.disconnect(); } catch(e) {}
-                try { birdsNodes.filter.disconnect(); } catch(e) {}
-                try { birdsNodes.gain.disconnect(); } catch(e) {}
-                birdsNodes = null;
-            }
-        }
-
         // --- Train Synthesizer ---
         function startTrain() {
             initAudio();
@@ -546,12 +599,11 @@
         }
 
         function playSelectedSoundscape() {
-            const selectedSound = soundSelect.value;
-            if (selectedSound === 'rain') {
+            if (currentSound === 'rain') {
                 startRain();
-            } else if (selectedSound === 'birds') {
+            } else if (currentSound === 'birds') {
                 startBirds();
-            } else if (selectedSound === 'train') {
+            } else if (currentSound === 'train') {
                 startTrain();
             } else {
                 stopAllAudio();
@@ -672,14 +724,45 @@
         resetBtn.addEventListener('click', () => {
             initAudio();
             resetTimer();
+            resetBtn.style.transform = 'rotate(-360deg)';
+            setTimeout(() => {
+                resetBtn.style.transform = 'none';
+            }, 400);
         });
 
-        soundSelect.addEventListener('change', () => {
+        // Sound Popover Toggle
+        soundBtn.addEventListener('click', (e) => {
             initAudio();
-            stopAllAudio();
-            if (isRunning) {
-                playSelectedSoundscape();
+            e.stopPropagation();
+            soundPopover.classList.toggle('active');
+            soundBtn.classList.toggle('active');
+        });
+
+        // Close popover when clicking outside
+        document.addEventListener('click', (e) => {
+            if (soundPopover.classList.contains('active') && !soundPopover.contains(e.target) && e.target !== soundBtn) {
+                soundPopover.classList.remove('active');
+                soundBtn.classList.remove('active');
             }
+        });
+
+        // Sound Selection
+        soundOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                initAudio();
+                soundOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                
+                currentSound = option.dataset.value;
+                stopAllAudio();
+                
+                if (isRunning) {
+                    playSelectedSoundscape();
+                }
+                
+                soundPopover.classList.remove('active');
+                soundBtn.classList.remove('active');
+            });
         });
 
         // Fullscreen Logic
