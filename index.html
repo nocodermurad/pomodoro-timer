@@ -72,25 +72,25 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 24px;
-            padding: 24px;
+            gap: clamp(12px, 4vw, 24px);
+            padding: clamp(12px, 4vw, 24px);
             width: 100%;
-            max-width: 360px;
+            max-width: 400px;
         }
 
         .modes {
             display: flex;
-            gap: 12px;
+            gap: clamp(6px, 2vw, 12px);
         }
 
         .mode-btn {
             background: transparent;
             border: 1px solid var(--border-color);
-            padding: 8px 18px;
+            padding: clamp(6px, 1.5vw, 8px) clamp(10px, 3vw, 18px);
             border-radius: 9999px;
             color: var(--text-secondary);
             font-family: inherit;
-            font-size: 15px;
+            font-size: clamp(12px, 3.5vw, 15px);
             font-weight: 700;
             white-space: nowrap;
             cursor: pointer;
@@ -110,29 +110,29 @@
         }
 
         .timer-display {
-            font-size: 120px;
+            font-size: clamp(60px, 24vw, 120px);
             font-weight: 800;
             letter-spacing: -3px;
             color: var(--text-primary);
             font-variant-numeric: tabular-nums;
             line-height: 1;
-            margin: 16px 0;
+            margin: clamp(8px, 3vw, 16px) 0;
         }
 
         .controls-row {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: clamp(12px, 4vw, 20px);
         }
 
         .start-btn {
             background: var(--text-primary);
             color: var(--bg-color);
             border: none;
-            padding: 12px 32px;
+            padding: clamp(8px, 2vw, 12px) clamp(24px, 6vw, 32px);
             border-radius: 9999px;
             font-family: inherit;
-            font-size: 18px;
+            font-size: clamp(15px, 4vw, 18px);
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -157,8 +157,8 @@
             justify-content: center;
             border-radius: 50%;
             transition: all 0.2s ease;
-            width: 40px;
-            height: 40px;
+            width: clamp(34px, 8vw, 40px);
+            height: clamp(34px, 8vw, 40px);
         }
 
         .icon-btn:hover, .icon-btn.active {
