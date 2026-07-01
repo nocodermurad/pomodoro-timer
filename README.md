@@ -8,10 +8,11 @@ A minimalist, monochrome, and clean Pomodoro Timer widget matching Notion's mode
   - **Pomodoro** (25 minutes)
   - **Short Break** (5 minutes)
   - **Long Break** (10 minutes)
-- **Ambient Soundscapes**: Built-in 100% offline client-side synthesizers using the Web Audio API:
-  - 🌧️ **Rain**: Soft, soothing pink noise rain patter.
-  - 🐦 **Birds**: Randomized morning birds chirping in a quiet forest.
-  - 🚂 **Train**: Relaxing low-frequency track rumble and rhythmic track chugs.
+- **Ambient Soundscapes**: High-quality embedded MP3 audio tracks with auto-play capability:
+  - 🌧️ **Rain**: Soft, soothing rain patter.
+  - 🐦 **Birds**: Morning birds chirping in a quiet forest.
+  - 🚂 **Train**: Relaxing track rumble and rhythmic chugs.
+  - 🎛️ **Remix Sound**: A custom mix that auto-plays when you start a Pomodoro session or enter fullscreen mode!
 - **Responsive Embed Mode**: Automatically detects if it is embedded inside an `iframe` and adjusts its border radius and dimensions to adapt beautifully.
 - **Fullscreen API Support**: A subtle fullscreen toggle button in the bottom-right corner.
 - **System Themes**: Responsive Light and Dark mode that matches the user's system preferences.
