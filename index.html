@@ -90,8 +90,9 @@
             border-radius: 9999px;
             color: var(--text-secondary);
             font-family: inherit;
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 700;
+            white-space: nowrap;
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -109,8 +110,8 @@
         }
 
         .timer-display {
-            font-size: 110px;
-            font-weight: 700;
+            font-size: 120px;
+            font-weight: 800;
             letter-spacing: -3px;
             color: var(--text-primary);
             font-variant-numeric: tabular-nums;
@@ -131,8 +132,8 @@
             padding: 12px 32px;
             border-radius: 9999px;
             font-family: inherit;
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
             display: flex;
@@ -210,7 +211,7 @@
             text-align: left;
             font-family: inherit;
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-secondary);
             cursor: pointer;
             display: flex;
@@ -227,7 +228,7 @@
 
         .sound-option.selected {
             color: var(--text-primary);
-            font-weight: 600;
+            font-weight: 700;
             background: var(--card-bg);
         }
 
@@ -697,38 +698,6 @@
                 }
             }, 1000);
         }
-
-        function pauseTimer() {
-            if (!isRunning) return;
-            isRunning = false;
-            startBtn.textContent = 'Start';
-            clearInterval(timer);
-            stopAllAudio();
-        }
-
-        function resetTimer() {
-            pauseTimer();
-            timeRemaining = defaultTime;
-            updateDisplay();
-        }
-
-        startBtn.addEventListener('click', () => {
-            initAudio();
-            if (isRunning) {
-                pauseTimer();
-            } else {
-                startTimer();
-            }
-        });
-
-        resetBtn.addEventListener('click', () => {
-            initAudio();
-            resetTimer();
-            resetBtn.style.transform = 'rotate(-360deg)';
-            setTimeout(() => {
-                resetBtn.style.transform = 'none';
-            }, 400);
-        });
 
         // Sound Popover Toggle
         soundBtn.addEventListener('click', (e) => {
