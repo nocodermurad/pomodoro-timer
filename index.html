@@ -324,6 +324,7 @@
                         <button class="sound-option" data-value="rain">Rain</button>
                         <button class="sound-option" data-value="birds">Birds</button>
                         <button class="sound-option" data-value="train">Train</button>
+                        <button class="sound-option" data-value="remix">Remix</button>
                     </div>
                 </div>
             </div>
@@ -367,15 +368,10 @@
         let timeRemaining = defaultTime;
         let currentSound = 'none';
 
-        // Web Audio API Synthesizer Setup
+        // Audio Elements Setup
         let audioCtx = null;
-        let rainNodes = null;
-        let birdsTimer = null;
-        let birdsNodes = null;
-        let trainTimer = null;
-        let trainNodes = null;
-
         function initAudio() {
+            // Keep this for the chime alert
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
@@ -384,237 +380,33 @@
             }
         }
 
-        // --- Rain Synthesizer ---
-        function startRain() {
-            initAudio();
-            stopRain();
-            
-            const bufferSize = 2 * audioCtx.sampleRate;
-            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            const output = noiseBuffer.getChannelData(0);
-            
-            // Generate pink noise approximation for a smoother, natural sound
-            let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
-            for (let i = 0; i < bufferSize; i++) {
-                const white = Math.random() * 2 - 1;
-                b0 = 0.99886 * b0 + white * 0.0555179;
-                b1 = 0.99332 * b1 + white * 0.0750759;
-                b2 = 0.96900 * b2 + white * 0.1538520;
-                b3 = 0.86650 * b3 + white * 0.3104856;
-                b4 = 0.55000 * b4 + white * 0.5329522;
-                b5 = -0.7616 * b5 - white * 0.0168980;
-                const pink = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
-                b6 = white * 0.115926;
-                output[i] = pink * 0.11;
-            }
-            
-            const noiseSource = audioCtx.createBufferSource();
-            noiseSource.buffer = noiseBuffer;
-            noiseSource.loop = true;
-            
-            const filter = audioCtx.createBiquadFilter();
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(1000, audioCtx.currentTime);
-            
-            const gainNode = audioCtx.createGain();
-            gainNode.gain.setValueAtTime(0.18, audioCtx.currentTime);
-            
-            noiseSource.connect(filter);
-            filter.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            noiseSource.start(0);
-            
-            rainNodes = { source: noiseSource, filter: filter, gain: gainNode };
-        }
+        const audioFiles = {
+            rain: new Audio('./Sounds/2.Rain.mp3'),
+            birds: new Audio('./Sounds/1.Birds.mp3'),
+            train: new Audio('./Sounds/3.Train.mp3'),
+            remix: new Audio('./Sounds/4.Remix Sound.mp3')
+        };
+        
+        Object.values(audioFiles).forEach(audio => {
+            audio.loop = true;
+        });
 
-        function stopRain() {
-            if (rainNodes) {
-                try { rainNodes.source.stop(); } catch(e) {}
-                try { rainNodes.source.disconnect(); } catch(e) {}
-                try { rainNodes.filter.disconnect(); } catch(e) {}
-                try { rainNodes.gain.disconnect(); } catch(e) {}
-                rainNodes = null;
-            }
-        }
-
-        // --- Birds Synthesizer ---
-        function startBirds() {
-            initAudio();
-            stopBirds();
-            
-            // Soft background forest rustle
-            const bufferSize = 2 * audioCtx.sampleRate;
-            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            const output = noiseBuffer.getChannelData(0);
-            let b0=0, b1=0, b2=0, b3=0, b4=0, b5=0, b6=0;
-            for (let i = 0; i < bufferSize; i++) {
-                const white = Math.random() * 2 - 1;
-                b0 = 0.99886 * b0 + white * 0.0555179;
-                b1 = 0.99332 * b1 + white * 0.0750759;
-                b2 = 0.96900 * b2 + white * 0.1538520;
-                b3 = 0.86650 * b3 + white * 0.3104856;
-                b4 = 0.55000 * b4 + white * 0.5329522;
-                b5 = -0.7616 * b5 - white * 0.0168980;
-                const pink = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
-                b6 = white * 0.115926;
-                output[i] = pink * 0.11;
-            }
-            
-            const ambientSource = audioCtx.createBufferSource();
-            ambientSource.buffer = noiseBuffer;
-            ambientSource.loop = true;
-            
-            const ambientFilter = audioCtx.createBiquadFilter();
-            ambientFilter.type = 'bandpass';
-            ambientFilter.frequency.setValueAtTime(450, audioCtx.currentTime);
-            ambientFilter.Q.setValueAtTime(0.6, audioCtx.currentTime);
-            
-            const ambientGain = audioCtx.createGain();
-            ambientGain.gain.setValueAtTime(0.03, audioCtx.currentTime);
-            
-            ambientSource.connect(ambientFilter);
-            ambientFilter.connect(ambientGain);
-            ambientGain.connect(audioCtx.destination);
-            ambientSource.start(0);
-            
-            birdsNodes = { source: ambientSource, filter: ambientFilter, gain: ambientGain };
-            
-            const playChirp = () => {
-                if (!birdsNodes) return;
-                const now = audioCtx.currentTime;
-                const chirpsCount = Math.floor(Math.random() * 3) + 2; 
-                let timeOffset = 0;
-                
-                for (let i = 0; i < chirpsCount; i++) {
-                    const chirpStart = now + timeOffset;
-                    const duration = 0.08 + Math.random() * 0.05;
-                    
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    
-                    osc.type = 'sine';
-                    const baseFreq = 2200 + Math.random() * 500;
-                    osc.frequency.setValueAtTime(baseFreq, chirpStart);
-                    osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.35, chirpStart + duration);
-                    
-                    gain.gain.setValueAtTime(0, chirpStart);
-                    gain.gain.linearRampToValueAtTime(0.025, chirpStart + duration * 0.15);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, chirpStart + duration);
-                    
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    
-                    osc.start(chirpStart);
-                    osc.stop(chirpStart + duration);
-                    
-                    timeOffset += duration + 0.06 + Math.random() * 0.08;
-                }
-                
-                birdsTimer = setTimeout(playChirp, 3000 + Math.random() * 4000);
-            };
-            
-            birdsTimer = setTimeout(playChirp, 800);
-        }
-
-        // --- Train Synthesizer ---
-        function startTrain() {
-            initAudio();
-            stopTrain();
-            
-            const bufferSize = 2 * audioCtx.sampleRate;
-            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            const output = noiseBuffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-                output[i] = Math.random() * 2 - 1;
-            }
-            
-            const rumbleSource = audioCtx.createBufferSource();
-            rumbleSource.buffer = noiseBuffer;
-            rumbleSource.loop = true;
-            
-            const rumbleFilter = audioCtx.createBiquadFilter();
-            rumbleFilter.type = 'lowpass';
-            rumbleFilter.frequency.setValueAtTime(60, audioCtx.currentTime);
-            
-            const rumbleGain = audioCtx.createGain();
-            rumbleGain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-            
-            rumbleSource.connect(rumbleFilter);
-            rumbleFilter.connect(rumbleGain);
-            rumbleGain.connect(audioCtx.destination);
-            rumbleSource.start(0);
-            
-            trainNodes = { source: rumbleSource, filter: rumbleFilter, gain: rumbleGain };
-            
-            let beat = 0;
-            const playChug = () => {
-                if (!trainNodes) return;
-                const now = audioCtx.currentTime;
-                
-                const noise = audioCtx.createBufferSource();
-                noise.buffer = noiseBuffer;
-                
-                const chugFilter = audioCtx.createBiquadFilter();
-                chugFilter.type = 'bandpass';
-                chugFilter.frequency.setValueAtTime(140, now);
-                chugFilter.Q.setValueAtTime(2.5, now);
-                
-                const chugGain = audioCtx.createGain();
-                
-                let volume = 0.04;
-                if (beat % 4 === 1 || beat % 4 === 3) volume = 0.015;
-                
-                chugGain.gain.setValueAtTime(0, now);
-                chugGain.gain.linearRampToValueAtTime(volume, now + 0.015);
-                chugGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
-                
-                noise.connect(chugFilter);
-                chugFilter.connect(chugGain);
-                chugGain.connect(audioCtx.destination);
-                
-                noise.start(now);
-                noise.stop(now + 0.11);
-                
-                beat++;
-                
-                const delay = (beat % 2 === 0) ? 420 : 160;
-                trainTimer = setTimeout(playChug, delay);
-            };
-            
-            trainTimer = setTimeout(playChug, 100);
-        }
-
-        function stopTrain() {
-            if (trainTimer) {
-                clearTimeout(trainTimer);
-                trainTimer = null;
-            }
-            if (trainNodes) {
-                try { trainNodes.source.stop(); } catch(e) {}
-                try { trainNodes.source.disconnect(); } catch(e) {}
-                try { trainNodes.filter.disconnect(); } catch(e) {}
-                try { trainNodes.gain.disconnect(); } catch(e) {}
-                trainNodes = null;
-            }
-        }
+        let currentAudio = null;
 
         function playSelectedSoundscape() {
-            if (currentSound === 'rain') {
-                startRain();
-            } else if (currentSound === 'birds') {
-                startBirds();
-            } else if (currentSound === 'train') {
-                startTrain();
-            } else {
-                stopAllAudio();
+            stopAllAudio();
+            if (currentSound !== 'none' && audioFiles[currentSound]) {
+                currentAudio = audioFiles[currentSound];
+                currentAudio.play().catch(e => console.log('Audio play failed:', e));
             }
         }
 
         function stopAllAudio() {
-            stopRain();
-            stopBirds();
-            stopTrain();
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio = null;
+            }
         }
 
         function playAlertChime() {
@@ -676,12 +468,29 @@
             });
         });
 
+        let hasUserSelectedSound = false;
+
+        function selectSound(value) {
+            currentSound = value;
+            soundOptions.forEach(opt => {
+                if (opt.dataset.value === value) {
+                    opt.classList.add('selected');
+                } else {
+                    opt.classList.remove('selected');
+                }
+            });
+        }
+
         // Timer Logic
         function startTimer() {
             if (isRunning) return;
             initAudio();
             isRunning = true;
             startBtn.textContent = 'Pause';
+            
+            if (!hasUserSelectedSound && currentMode === 'pomodoro') {
+                selectSound('remix');
+            }
             
             playSelectedSoundscape();
 
@@ -698,6 +507,38 @@
                 }
             }, 1000);
         }
+
+        function pauseTimer() {
+            if (!isRunning) return;
+            isRunning = false;
+            startBtn.textContent = 'Start';
+            clearInterval(timer);
+            stopAllAudio();
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timeRemaining = defaultTime;
+            updateDisplay();
+        }
+
+        startBtn.addEventListener('click', () => {
+            initAudio();
+            if (isRunning) {
+                pauseTimer();
+            } else {
+                startTimer();
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            initAudio();
+            resetTimer();
+            resetBtn.style.transform = 'rotate(-360deg)';
+            setTimeout(() => {
+                resetBtn.style.transform = 'none';
+            }, 400);
+        });
 
         // Sound Popover Toggle
         soundBtn.addEventListener('click', (e) => {
@@ -719,10 +560,9 @@
         soundOptions.forEach(option => {
             option.addEventListener('click', () => {
                 initAudio();
-                soundOptions.forEach(opt => opt.classList.remove('selected'));
-                option.classList.add('selected');
+                hasUserSelectedSound = true;
+                selectSound(option.dataset.value);
                 
-                currentSound = option.dataset.value;
                 stopAllAudio();
                 
                 if (isRunning) {
@@ -736,6 +576,13 @@
 
         // Fullscreen Logic
         fullscreenBtn.addEventListener('click', () => {
+            if (!hasUserSelectedSound && currentMode === 'pomodoro') {
+                selectSound('remix');
+                if (isRunning) {
+                    playSelectedSoundscape();
+                }
+            }
+
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
                     console.log(`Error attempting to enable fullscreen: ${err.message}`);
